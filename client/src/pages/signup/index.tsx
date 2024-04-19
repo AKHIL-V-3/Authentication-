@@ -20,21 +20,21 @@ function SignUp() {
     };
     return (
         <>
-            <div className='container'>
+            <div className='xl:container'>
 
-                <div className='w-100 h-screen flex justify-center items-center'>
+                <div className='w-100 h-screen xl:flex xl:justify-center xl:items-center'>
 
-                    <div className='w-5/6 h-5/6 flex'>
+                    <div className='xl:w-5/6 xl:h-5/6 h-full w-full xl:flex'>
 
-                        <div className='w-1/2 h-ful'>
+                        <div className='xl:w-1/2 xl:h-full h-80'>
 
-                            <img className='w-full h-full object-cover' src="/assets/HD Assignment.jpg" alt="" />
+                            <img className='w-full h-full xl:object-cover object-contain ' src="/assets/HD Assignment.jpg" alt="" />
 
                         </div>
 
-                        <div className='w-1/2 h-full flex justify-start items-center'>
+                        <div className='xl:w-1/2 xl:h-full w-full flex justify-center xl:justify-start xl:items-center'>
 
-                            <div className='w-8/12 h-auto shadow-xl border border-grey-600  rounded-xl flex justify-center items-center bg-custom-white'>
+                            <div className='xl:w-8/12 h-auto shadow-xl border border-grey-600  w-11/12 rounded-xl flex justify-center items-center bg-custom-white'>
 
                                 <div className='w-10/12 h-auto pt-5 pb-5'>
                                     <div className='flex justify-between items-end text-custom-purple'>
@@ -103,7 +103,7 @@ function SignUp() {
                                         </div>
 
 
-                                        <button className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-lg font-semibold text-lg'>Sign Up</button>
+                                        <button className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-xl font-semibold text-lg'>Sign Up</button>
 
 
 
