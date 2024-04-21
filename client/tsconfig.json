@@ -20,6 +20,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
+  "types": ["node", "axios"],
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

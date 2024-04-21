@@ -30,11 +30,6 @@ function SignUp() {
         setIsExpanded(!isExpanded);
     };
 
-    // const ErrorComponent = ({ children }) => (
-    //     <div className="text-red-500 text-xs">{children}</div>
-    // );
-
-
     const formik = useFormik <FormValues>({
 
         initialValues: {
@@ -60,11 +55,7 @@ function SignUp() {
             handleSubmit
         }
 
-
     })
-
-
-
 
 
 
