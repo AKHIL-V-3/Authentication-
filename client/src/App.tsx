@@ -3,6 +3,7 @@ import './App.css'
 import SignUp from './pages/signup';
 import HomePage from './pages/Home';
 import SignIn from './pages/signin';
+import OtpVerify from './pages/otp';
 
 const router = createBrowserRouter([
 
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUp />
+  },
+  {
+    path: "/signup/otp/:email",
+    element: <OtpVerify />
   },
   {
     path: "/signin",

@@ -1,16 +1,24 @@
 import { IconChevronDown, IconChevronRight, IconEye, IconEyeOff } from '@tabler/icons-react';
 import { useFormik } from 'formik';
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import authApi from '../../api/api';
+import { useDispatch } from "react-redux"
+import { userActions } from '../../lib/Redux/slice/userSlice';
 
 import * as Yup from 'yup';
+
 
 function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const [showretypePassword, setShowretypePassword] = useState(false);
+    const [error, setError] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
     const navigate = useNavigate()
-    
+    const dispatch = useDispatch()
+
+    const api = authApi()
+
     interface FormValues {
         firstName: string;
         lastName: string;
@@ -19,7 +27,7 @@ function SignUp() {
         contactMode: string;
         email: string;
     }
-    
+
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -30,7 +38,24 @@ function SignUp() {
         setIsExpanded(!isExpanded);
     };
 
-    const formik = useFormik <FormValues>({
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            setError('')
+            dispatch(userActions.addUser(formik.values));
+             const response = await api.signUp(formik.values)               
+             if(error){
+                e.preventDefault();
+             }
+             navigate(`/signup/otp/${encodeURIComponent(response?.data?.email)}`);
+            console.log(response);
+        } catch (error) {        
+               if(error?.response?.data?.message === "User with this email already exists"){
+                   setError(error?.response?.data?.message)
+               }
+        }
+    }
+
+    const formik = useFormik<FormValues>({
 
         initialValues: {
 
@@ -51,24 +76,13 @@ function SignUp() {
             email: Yup.string().email('Invalid email').required('Email is required'),
         }),
 
-        onSubmit: () => {
-            handleSubmit
-        }
-
+        onSubmit: handleSubmit
     })
 
 
-
-    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) => {
-
-        e.preventDefault();
-        formik.submitForm();
-
-        console.log(formik.values,'dddddddd');
-        
-    }
-
-
+  useEffect(()=>{  
+  },[error])
+    
     return (
         <>
             <div className='xl:container'>
@@ -93,24 +107,25 @@ function SignUp() {
                                         <h3 onClick={() => navigate("/signin")} className='text-xl cursor-pointer font-bold underline'>Sign <span className='text-custom-red underline'>In</span></h3>
                                     </div>
 
-                                    <form onSubmit={handleSubmit}>
-
+                                    <form onSubmit={formik.handleSubmit}>
+                                               
+    
                                         <div className='mt-5 flex flex-col gap-5'>
                                             <div>
-                                                <input type="text" value={formik.values.firstName} onChange={formik.handleChange}  placeholder='First Name' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="firstName" />
+                                                <input type="text" value={formik.values.firstName} onChange={formik.handleChange} placeholder='First Name' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="firstName" />
                                                 {formik.touched.firstName && formik.errors.firstName ? <p className='text-red-500 text-xs'>{formik.errors.firstName}</p> : null}
-                                                
+
                                             </div>
 
                                             <div>
-                                                <input type="text" value={formik.values.lastName} onChange={formik.handleChange}  placeholder='Last Name' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="lastName" />
+                                                <input type="text" value={formik.values.lastName} onChange={formik.handleChange} placeholder='Last Name' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="lastName" />
                                                 {formik.touched.lastName && formik.errors.lastName ? <p className='text-red-500 text-xs'>{formik.errors.lastName}</p> : null}
                                             </div>
 
 
                                             <div className='relative'>
 
-                                                <input type={showPassword ? 'text' : 'password'} value={formik.values.password} onChange={formik.handleChange}  placeholder='Set Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="password" />
+                                                <input type={showPassword ? 'text' : 'password'} value={formik.values.password} onChange={formik.handleChange} placeholder='Set Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="password" />
                                                 {formik.touched.password && formik.errors.password ? <p className='text-red-500 text-xs'>{formik.errors.password}</p> : null}
                                                 <div
                                                     onClick={togglePasswordVisibility}
@@ -123,7 +138,7 @@ function SignUp() {
 
                                             <div className='relative'>
 
-                                                <input type={showretypePassword ? 'text' : 'password'} value={formik.values.retypePassword} onChange={formik.handleChange}  placeholder='Retype Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="retypePassword"   />
+                                                <input type={showretypePassword ? 'text' : 'password'} value={formik.values.retypePassword} onChange={formik.handleChange} placeholder='Retype Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="retypePassword" />
                                                 {formik.touched.retypePassword && formik.errors.retypePassword ? <p className='text-red-500 text-xs'>{formik.errors.retypePassword}</p> : null}
 
                                                 <div
@@ -135,7 +150,7 @@ function SignUp() {
                                             </div>
 
                                             <div className='relative'>
-                                                <input type="text" value={formik.values.contactMode} onChange={formik.handleChange}  placeholder='Contact Mode' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm bg-custom-white' disabled />
+                                                <input type="text" value={formik.values.contactMode} onChange={formik.handleChange} placeholder='Contact Mode' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm bg-custom-white' disabled />
                                                 {formik.touched.contactMode && formik.errors.contactMode ? <p className='text-red-500 text-xs'>{formik.errors.contactMode}</p> : null}
                                                 <div
                                                     onClick={toggleExpand}
@@ -153,14 +168,15 @@ function SignUp() {
                                             </div>
 
                                             <div>
-                                                <input type='email' value={formik.values.email} onChange={formik.handleChange}  placeholder='Enter Email' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="email"  />
+                                                <input type='email' value={formik.values.email} onChange={formik.handleChange} placeholder='Enter Email' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="email" />
                                                 {formik.touched.email && formik.errors.email ? <p className='text-red-500 text-xs'>{formik.errors.email}</p> : null}
+                                                {error &&<p className='text-red-500 text-xs'>{error}</p>}
                                             </div>
 
 
                                             <button type="submit" className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-xl font-semibold text-lg'>Sign Up</button>
 
-
+                                           {/* {error && <div className='h-8 flex justify-center items-center bg-custom-red'>{error}</div>} */}
 
                                         </div>
 

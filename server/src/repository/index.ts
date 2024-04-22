@@ -1,12 +1,86 @@
-const controller = {
+import { promises } from "dns";
+import { User, Otp } from "../Models/usermodel";
+import { Iuser } from "../interfaces";
+import { Iotp } from "../interfaces";
 
-    signup: (user:any): void => {
-        console.log(user);
-       
+const repository = {
+
+    signup: async (user: Iuser) => {
+
+        try {
+            const existingUser = await User.findOne({ email: user.email })
+            if (existingUser) {
+                throw new Error("User with this email already exists");
+            }
+            const newUser = new User({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                password: user.password,
+                contactmode: user.contactmode,
+                email: user.email
+            })
+            const response = await newUser.save()
+            console.log(response, 'User saved successfully');
+            return response;
+
+        } catch (err) {
+            throw err
+        }
+
     },
 
-    signin: (user:any): void => {
+    saveOtp: async (data: Iotp) => {
+        try {
+            const newOtp = new Otp({
+                email: data.email,
+                otp: data.otp
+            })
+            const response = await newOtp.save()
+            return response
+        } catch (err) {
+            console.log(err);
+        }
+
+    },
+
+    checkUserExist: async (email: string) => {
+        try {
+            const existingUser = await User.findOne({ email: email })
+            if (existingUser) {
+                throw new Error("User with this email already exists");
+            }
+        } catch (err) {
+            throw err
+        }
+    },
+
+    verifyotp: async (otpdata: Iotp) => {
+        try {
+            const Otpvalue = await Otp.findOne({ email: otpdata.email })
+           
+             if(Otpvalue?.otp === otpdata.otp){
+                  return Otpvalue
+             }else{
+                throw new Error("Incorrect Otp");
+             }
+        } catch (err) {
+            console.log(err,'rrr');
+            throw err
+        }
+    },
+    removeOtp:async(email:string)=>{
+        try{
+            const response = await Otp.deleteOne({email:email})
+            return response
+         }catch(err){
+             console.log(err);  
+         }
+    },
+
+    signin: (user: any): void => {
         console.log(user);
-       
+
     }
 };
+
+export default repository
