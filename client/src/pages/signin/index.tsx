@@ -3,8 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import authApi from '../../api/api';
+import { useDispatch } from 'react-redux';
+
 
 import * as Yup from 'yup';
+import { userActions } from '../../lib/Redux/slice/userSlice';
 
 function SignIn() {
 
@@ -12,10 +15,10 @@ function SignIn() {
     const navigate = useNavigate()
     const [emailerror, setemailError] = useState('')
     const [passworderror, setpasswordError] = useState('')
+    const dispatch = useDispatch()
 
     const api = authApi()
-
-
+    
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };
@@ -25,14 +28,12 @@ function SignIn() {
         password: string;
     }
 
-    // e: React.FormEvent<HTMLFormElement>
-
     const handleSubmit = async () => {
         try {
             const response = await api.signIn(formik.values)
-            console.log(response, '777777777777');
 
             if (response.status === 200) {
+                dispatch(userActions.LogIn())
                 navigate("/")
             }
 
@@ -45,7 +46,6 @@ function SignIn() {
             if (error?.response?.data?.message === "Wrong password") {
                 setpasswordError(error?.response?.data?.message)
             }
-
         }
     }
 
@@ -60,7 +60,6 @@ function SignIn() {
             email: Yup.string().email('Invalid email').required('Email is required'),
             password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
         }),
-
         onSubmit: handleSubmit
     })
 

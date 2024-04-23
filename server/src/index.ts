@@ -18,7 +18,6 @@ app.use(cors({
 
 mongoosedb()
 
-
 app.use("/auth", authRouter)
 
 server.listen(5000,()=>{

@@ -35,10 +35,6 @@ const controller = {
                 if (resp) {
                     await repository.removeOtp(resp.email)
 
-                    // if (req.cookies[process.env.ACCESS_TOKEN!]) {
-                    //     req.cookies[process.env.ACCESS_TOKEN!] = "";
-                    // }
-
                     try {
                         const accesstoken = jwt.sign({ userId: resp._id }, process.env.TOKEN_SECRET!, { expiresIn: '365d' });
                         if (accesstoken) {
@@ -52,11 +48,8 @@ const controller = {
                         } else {
                             console.error('Error: accessToken is undefined');
                         }
-
-
                     } catch (err) {
                         console.log(err);
-
                     }
                 }
                 res.status(200).json({ message: "otp verified successfully" })
@@ -100,10 +93,7 @@ const controller = {
     },
 
     logout: (req: Request, res: Response) => {
-        res.clearCookie(`${process.env.ACCESS_TOKEN}`)
-        req.cookies[`${process.env.ACCESS_TOKEN}`] = "";
-        res.clearCookie(`${process.env.REFRESH_TOKEN}`)
-        req.cookies[`${process.env.REFRESH_TOKEN}`] = "";
+        res.clearCookie(`${process.env.ACCESS_TOKEN!}`)
         res.status(200).json({ message: "Successfully Logged Out" })
     }
 

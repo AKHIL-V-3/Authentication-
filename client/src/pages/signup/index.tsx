@@ -42,16 +42,16 @@ function SignUp() {
         try {
             setError('')
             dispatch(userActions.addUser(formik.values));
-             const response = await api.signUp(formik.values)               
-             if(error){
+            const response = await api.signUp(formik.values)
+            if (error) {
                 e.preventDefault();
-             }
-             navigate(`/signup/otp/${encodeURIComponent(response?.data?.email)}`);
+            }
+            navigate(`/signup/otp/${encodeURIComponent(response?.data?.email)}`);
             console.log(response);
-        } catch (error) {        
-               if(error?.response?.data?.message === "User with this email already exists"){
-                   setError(error?.response?.data?.message)
-               }
+        } catch (error) {
+            if (error?.response?.data?.message === "User with this email already exists") {
+                setError(error?.response?.data?.message)
+            }
         }
     }
 
@@ -80,10 +80,10 @@ function SignUp() {
     })
 
 
-    useEffect(()=>{
+    useEffect(() => {
         formik.errors.email && setError("")
-   },[formik.errors])
-    
+    }, [formik.errors])
+
     return (
         <>
             <div className='xl:container'>
@@ -109,8 +109,8 @@ function SignUp() {
                                     </div>
 
                                     <form onSubmit={formik.handleSubmit}>
-                                               
-    
+
+
                                         <div className='mt-5 flex flex-col gap-5'>
                                             <div>
                                                 <input type="text" value={formik.values.firstName} onChange={formik.handleChange} placeholder='First Name' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="firstName" />
@@ -171,13 +171,13 @@ function SignUp() {
                                             <div>
                                                 <input type='email' value={formik.values.email} onChange={formik.handleChange} placeholder='Enter Email' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id="email" />
                                                 {formik.touched.email && formik.errors.email ? <p className='text-red-500 text-xs'>{formik.errors.email}</p> : null}
-                                                {error &&<p className='text-red-500 text-xs'>{error}</p>}
+                                                {error && <p className='text-red-500 text-xs'>{error}</p>}
                                             </div>
 
 
                                             <button type="submit" className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-xl font-semibold text-lg'>Sign Up</button>
 
-                                           {/* {error && <div className='h-8 flex justify-center items-center bg-custom-red'>{error}</div>} */}
+                                            {/* {error && <div className='h-8 flex justify-center items-center bg-custom-red'>{error}</div>} */}
 
                                         </div>
 

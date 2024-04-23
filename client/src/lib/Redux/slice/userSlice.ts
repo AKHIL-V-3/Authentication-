@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 interface userInterface {
-    user:object
+    user:object,
+    isLoggedIn:boolean
 }
 
 const initialState: userInterface = {
-    user: {}
+    user: {},
+    isLoggedIn:false
 }
 
 
@@ -20,6 +22,14 @@ const userSlice = createSlice({
         removeUser: (state) =>{
             state.user = {}
         },
+        LogIn:(state)=>{
+            state.isLoggedIn = true
+        },
+        Logout:(state)=>{
+            state.isLoggedIn = false
+        },
+       
+
         
     }
 })

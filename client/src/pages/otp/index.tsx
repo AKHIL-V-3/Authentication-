@@ -5,8 +5,11 @@ import { useFormik } from 'formik';
 import authApi from "../../api/api"
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from "../../lib/Redux/hooks/index";
+
 import * as Yup from 'yup';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useDispatch } from 'react-redux';
+import { userActions } from '../../lib/Redux/slice/userSlice';
 
 function OtpVerify() {
 
@@ -16,6 +19,7 @@ function OtpVerify() {
     const user = useAppSelector((state) => state.userSlice.user)
     const navigate = useNavigate()
     const { email } = useParams();
+    const dispatch = useDispatch()
 
 
     interface FormValues {
@@ -50,6 +54,7 @@ function OtpVerify() {
             }
             const response = await api.otpVerify(otpData, user)
             if (response) {
+                dispatch(userActions.LogIn())
                 navigate("/")
             }
         } catch (err) {
@@ -69,9 +74,9 @@ function OtpVerify() {
         return () => clearTimeout(timeout);
     }, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         formik.errors.otp && setError('')
-   },[formik.errors])
+    }, [formik.errors])
 
 
     return (
