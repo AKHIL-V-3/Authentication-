@@ -18,6 +18,9 @@
 13. signin completed 
 14. used formik for validation 
 15. implement jwt(jsonwebtoken) in signin
+16. logout implemented
+17. project completed
+
  
 
 

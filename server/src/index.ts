@@ -20,8 +20,8 @@ mongoosedb()
 
 app.use("/auth", authRouter)
 
-server.listen(5000,()=>{
-      console.log('server started at 5000');        
+server.listen(8080,()=>{
+      console.log('server started at 8080');        
 })
 
 
