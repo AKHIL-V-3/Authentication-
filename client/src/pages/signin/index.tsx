@@ -1,7 +1,8 @@
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
-import React, { useState } from 'react'
-import {useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import authApi from '../../api/api';
 
 import * as Yup from 'yup';
 
@@ -9,7 +10,11 @@ function SignIn() {
 
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate()
-    const [error,setError] = useState('')
+    const [emailerror, setemailError] = useState('')
+    const [passworderror, setpasswordError] = useState('')
+
+    const api = authApi()
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -20,28 +25,33 @@ function SignIn() {
         password: string;
     }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // e: React.FormEvent<HTMLFormElement>
+
+    const handleSubmit = async () => {
         try {
-            setError('')
-            e.preventDefault()
+            const response = await api.signIn(formik.values)
+            console.log(response, '777777777777');
 
-            console.log(formik.values,'@@@@@@@@@@');
-            
+            if (response.status === 200) {
+                navigate("/")
+            }
 
-            //  const response = await api.signUp(formik.values)               
-             
-        } catch (error) {        
-               if(error?.response?.data?.message === "User with this email already exists"){
-                   setError(error?.response?.data?.message)
-               }
+        } catch (error) {
+
+            if (error?.response?.data?.message === "User with this Email not found") {
+                setemailError(error?.response?.data?.message)
+            }
+
+            if (error?.response?.data?.message === "Wrong password") {
+                setpasswordError(error?.response?.data?.message)
+            }
+
         }
     }
-
 
     const formik = useFormik<FormValues>({
 
         initialValues: {
-
             email: '',
             password: ''
         },
@@ -53,6 +63,11 @@ function SignIn() {
 
         onSubmit: handleSubmit
     })
+
+    useEffect(()=>{
+         formik.errors.email && setemailError("")  
+         formik.errors.password && setpasswordError("")
+    },[formik.errors])
 
     return (
         <>
@@ -70,26 +85,28 @@ function SignIn() {
                                     </div>
 
                                     <form onSubmit={formik.handleSubmit}>
-                                    <div className='mt-5 flex flex-col gap-5'>
-                                        <div>
-                                            <input type="email"  value={formik.values.email} onChange={formik.handleChange}  placeholder='Email' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id='email' />
-                                            {/* <p className='text-red-500 text-xs'>email required</p> */}
-                                            {formik.touched.email && formik.errors.email ? <p className='text-red-500 text-xs'>{formik.errors.email}</p> : null}
-                                        </div>
-                                        <div className='relative'>
-                                            <input type={showPassword ? 'text' : 'password'} value={formik.values.password} onChange={formik.handleChange} placeholder='Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id='password' />
-                                            {/* <p className='text-red-500 text-xs'>email required</p> */}
-                                            {formik.touched.password && formik.errors.password ? <p className='text-red-500 text-xs'>{formik.errors.password}</p> : null}
-                                            <div
-                                                onClick={togglePasswordVisibility}
-                                                className="absolute inset-y-0 right-0 px-3 flex items-center rounded-r-lg  outline-custom-purple"
-                                            >
-                                                {showPassword ? <IconEye className='text-custom-purple cursor-pointer' /> : <IconEyeOff className='text-custom-red cursor-pointer' />}
+                                        <div className='mt-5 flex flex-col gap-5'>
+                                            <div>
+                                                <input type="email" value={formik.values.email} onChange={formik.handleChange} placeholder='Email' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id='email' />
+                                                {/* <p className='text-red-500 text-xs'>email required</p> */}
+                                                {formik.touched.email && formik.errors.email ? <p className='text-red-500 text-xs'>{formik.errors.email}</p> : null}
+                                                {emailerror && <p className='text-red-500 text-xs'>{emailerror}</p>}
                                             </div>
+                                            <div className='relative'>
+                                                <input type={showPassword ? 'text' : 'password'} value={formik.values.password} onChange={formik.handleChange} placeholder='Password' className='w-full outline-none border-l-0 border-r-0 border-t-0 border-b-2 p-2 text-sm' id='password' />
+                                                {/* <p className='text-red-500 text-xs'>email required</p> */}
+                                                {formik.touched.password && formik.errors.password ? <p className='text-red-500 text-xs'>{formik.errors.password}</p> : null}
+                                                {passworderror && <p className='text-red-500 text-xs'>{passworderror}</p>}
+                                                <div
+                                                    onClick={togglePasswordVisibility}
+                                                    className="absolute inset-y-0 right-0 px-3 flex items-center rounded-r-lg  outline-custom-purple"
+                                                >
+                                                    {showPassword ? <IconEye className='text-custom-purple cursor-pointer' /> : <IconEyeOff className='text-custom-red cursor-pointer' />}
+                                                </div>
+                                            </div>
+                                            <button type='submit' className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-xl font-semibold text-lg'>Sign In</button>
+                                            <button onClick={() => navigate("/signup")} className='bg-transparent border-2 w-full h-12 mt-2 border-custom-purple text-custom-purple rounded-xl font-semibold text-lg'>Sign Up</button>
                                         </div>
-                                        <button type='submit' className='bg-custom-purple w-full h-12 mt-2 text-custom-white rounded-xl font-semibold text-lg'>Sign In</button>
-                                        <button onClick={()=> navigate("/signup")} className='bg-transparent border-2 w-full h-12 mt-2 border-custom-purple text-custom-purple rounded-xl font-semibold text-lg'>Sign Up</button>
-                                    </div>
                                     </form>
                                 </div>
                             </div>

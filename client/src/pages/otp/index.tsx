@@ -10,7 +10,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 
 function OtpVerify() {
 
-    const [error, setError] = useState(false)
+    const [error, setError] = useState("")
     const [showDiv, setShowDiv] = useState(false);
     const api = authApi()
     const user = useAppSelector((state) => state.userSlice.user)
@@ -56,7 +56,6 @@ function OtpVerify() {
             console.log(err);
             if (err?.response?.data?.message === "Incorrect Otp") {
                 setError(err?.response?.data?.message)
-                // setError(true)
             }
         }
     }
@@ -69,6 +68,10 @@ function OtpVerify() {
         }, 5000);
         return () => clearTimeout(timeout);
     }, []);
+
+    useEffect(()=>{
+        formik.errors.otp && setError('')
+   },[formik.errors])
 
 
     return (

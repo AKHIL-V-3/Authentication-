@@ -1,7 +1,6 @@
 import { promises } from "dns";
 import { User, Otp } from "../Models/usermodel";
-import { Iuser } from "../interfaces";
-import { Iotp } from "../interfaces";
+import { Iotp, Iuser,signinUser } from "../interfaces";
 
 const repository = {
 
@@ -64,7 +63,7 @@ const repository = {
                 throw new Error("Incorrect Otp");
              }
         } catch (err) {
-            console.log(err,'rrr');
+            console.log(err);
             throw err
         }
     },
@@ -77,8 +76,13 @@ const repository = {
          }
     },
 
-    signin: (user: any): void => {
-        console.log(user);
+    signIn: async(user: signinUser)=> { 
+        try{
+            const response = await User.findOne({email:user.email})
+            return response
+         }catch(err){
+             console.log(err);  
+         }
 
     }
 };

@@ -1,4 +1,3 @@
-import { Document } from "mongoose"
 
 export interface Iuser{
     firstName:string,
@@ -12,4 +11,9 @@ export interface Iuser{
 export interface Iotp{
        email:string,
        otp:number,  
+}
+
+export interface signinUser{     
+        email:string,
+        password:string
 }

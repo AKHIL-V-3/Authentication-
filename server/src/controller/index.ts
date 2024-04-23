@@ -9,8 +9,6 @@ const controller = {
 
     signup: async (req: Request, res: Response): Promise<void> => {
         try {
-            req.body.password = await bcrypt.hash(req.body.password, 10)
-            console.log(req.body.email);
             await repository.checkUserExist(req.body.email)
             const getotp = await main({ email: req.body.email })
             const otpData = {
@@ -28,15 +26,15 @@ const controller = {
 
     verifyOtp: async (req: Request, res: Response): Promise<void> => {
         try {
+
             const response = await repository.verifyotp(req.body.otp)
 
             if (response) {
+                req.body.user.password = await bcrypt.hash(req.body.user.password, 10)
                 const resp = await repository.signup(req.body.user)
-                console.log(resp, 'qqqqqqqqqqq');
-
                 if (resp) {
                     await repository.removeOtp(resp.email)
-                    
+
                     // if (req.cookies[process.env.ACCESS_TOKEN!]) {
                     //     req.cookies[process.env.ACCESS_TOKEN!] = "";
                     // }
@@ -49,16 +47,15 @@ const controller = {
                                 expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
                                 httpOnly: true,
                                 sameSite: "lax",
-                                // domain: 'http://localhost:5173'
                             })
 
                         } else {
                             console.error('Error: accessToken is undefined');
                         }
-                        
+
 
                     } catch (err) {
-                        console.log(err, '3333333333333');
+                        console.log(err);
 
                     }
                 }
@@ -71,17 +68,35 @@ const controller = {
 
     },
 
-    signin: (req: Request, res: Response): void => {
-        console.log(req.body,'(((((((((((((((');
+    signin: async (req: Request, res: Response) => {
+        try {
+            const { password, email } = req.body
+            const user: any = await repository.signIn(req.body)
+            if (!user) {
+                res.status(400).json({ message: 'User with this Email not found' });
+            }
+            const passwordMatch = await bcrypt.compare(password, user.password)
 
+            if (!passwordMatch) {
+                res.status(401).json({ message: 'Wrong password' });
+            }
 
+            const accesstoken = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET!, { expiresIn: '365d' });
+            if (accesstoken) {
+                res.cookie(process.env.ACCESS_TOKEN!, accesstoken, {
+                    path: '/',
+                    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10),
+                    httpOnly: true,
+                    sameSite: "lax",
+                })
 
-
-        res.send("Signin successful");
-
-
-
-
+            } else {
+                console.error('Error: accessToken is undefined');
+            }
+            res.status(200).json({ message: 'User Signin successfully' })
+        } catch (err) {
+            console.log(err);
+        }
     },
 
     logout: (req: Request, res: Response) => {

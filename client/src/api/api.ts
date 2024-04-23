@@ -4,13 +4,10 @@ const authApi = () => {
 
     const signUp = async (user: object) => {
         try {
-
-            console.log('herrrrrrrrreeeee');
-            
             const response = await api.post('/signup', user)
             return response
         }catch(err){
-            console.log(err,'yyyyyyyyyyyyyy');
+            console.log(err);
             throw err    
         }
     }
@@ -31,13 +28,20 @@ const authApi = () => {
 
     const signIn = async (user: object) => {
         try {
-
-            console.log('herrrrrrrrreeeee');
-            
-            const response = await api.post('/signup', user)
+            const response = await api.post('/signin', user)
             return response
         }catch(err){
-            console.log(err,'yyyyyyyyyyyyyy');
+            console.log(err,'eeeeeee');
+            throw err    
+        }
+    }
+
+    const Logout = async () => {
+        try {
+            const response = await api.post('/logout')
+            return response
+        }catch(err){
+            console.log(err);
             throw err    
         }
     }
@@ -46,6 +50,7 @@ const authApi = () => {
         signUp,
         otpVerify,
         signIn,
+        Logout
         
     }
 

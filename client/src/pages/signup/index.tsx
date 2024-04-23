@@ -80,8 +80,9 @@ function SignUp() {
     })
 
 
-  useEffect(()=>{  
-  },[error])
+    useEffect(()=>{
+        formik.errors.email && setError("")
+   },[formik.errors])
     
     return (
         <>
